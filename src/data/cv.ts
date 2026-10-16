@@ -42,7 +42,7 @@ export const cv = {
     "Autonome, rigoureux et sensible à la sécurité, j'aime transformer un besoin d'exploitation en solution fiable, documentée et transmissible. Je reste curieux et en progression constante, avec des bases en développement full-stack (Java, Spring, Angular).",
   ],
   keyFigures: [
-    { value: '350', label: 'applications supervisées en production' },
+    { value: '350', label: 'applications supervisées en production par des scénarios utilisateur Playwright' },
     { value: '½ j → 5 min', label: "pour déployer l'outil de supervision sur 10 à 15 VM" },
     { value: '10 k€', label: "d'économies par an grâce à l'offre de test mobile" },
   ],
@@ -67,7 +67,7 @@ export const cv = {
         'Méthodes de travail uniformisées : toute modification de scénario est relue et tracée dans GitLab avant sa mise en supervision',
       ],
       activities: [
-        "Tierce maintenance applicative de l'outil de supervision web, pour garantir sa disponibilité auprès des exploitants",
+        "Tierce maintenance applicative de l'outil de supervision web, qui rejoue des scénarios utilisateur Playwright sur 350 applications, pour garantir sa disponibilité auprès des exploitants",
         "Conception, architecture, développement, mise en production et monitoring de l'offre de supervision mobile (Appium, émulateurs Android en virtualisation imbriquée, appareils iOS réels avec Xcode)",
         'Adaptation de la sonde à une authentification forte (certificats clients, double authentification)',
         'Chaînes CI sur GitLab et déploiement automatisé avec Ansible (Windows, Linux, macOS)',
@@ -76,7 +76,7 @@ export const cv = {
         "Page web d'inventaire de l'infrastructure",
         "Formation de l'équipe et d'un alternant, documentation technique, revues de code",
       ],
-      stack: ['Node.js', 'Perl', 'Appium', 'ADB', 'Xcode', 'GitLab CI', 'Ansible', 'Windows', 'Linux', 'macOS'],
+      stack: ['Node.js', 'Playwright', 'Perl', 'Appium', 'ADB', 'Xcode', 'GitLab CI', 'Ansible', 'Windows', 'Linux', 'macOS'],
     },
     {
       title: 'Concepteur développeur',
@@ -112,7 +112,7 @@ export const cv = {
   ] satisfies Experience[],
   skills: [
     { group: 'CI/CD et automatisation', items: ['GitLab CI', 'Ansible', 'Git', 'Scripts Perl et Node.js'] },
-    { group: 'Supervision et tests', items: ['Supervision applicative', 'Appium', 'ADB', 'Xcode', 'Émulateurs Android'] },
+    { group: 'Supervision et tests', items: ['Supervision applicative', 'Playwright', 'Appium', 'ADB', 'Xcode', 'Émulateurs Android'] },
     { group: 'Systèmes', items: ['Linux', 'Windows', 'macOS', 'Virtualisation'] },
     { group: 'Développement', items: ['Java', 'Spring Boot', 'Angular', 'TypeScript', 'Node.js', 'Astro'] },
     { group: 'Données', items: ['PostgreSQL', 'Oracle SQL', 'Liquibase'] },
