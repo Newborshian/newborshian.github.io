@@ -85,7 +85,7 @@ const jsonLd = {
               <h3 class="item-title">{item.title}</h3>
               <p class="muted">
                 {item.url ? <a href={item.url} rel="noopener">{item.school}</a> : item.school}
-                {` · ${item.location}`}
+                {item.location && ` · ${item.location}`}
                 {item.period && ` · ${item.period}`}
               </p>
               {item.details && <p>{item.details}</p>}

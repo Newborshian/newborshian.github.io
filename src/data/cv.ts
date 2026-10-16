@@ -129,11 +129,19 @@ export const cv = {
   ] satisfies Project[],
   education: [
     {
-      title: "Concepteur développeur d'applications Java full-stack (titre RNCP niveau 6)",
+      title: 'Développeur full-stack Angular / Spring (POEI, 57 jours)',
+      school: 'Orsys',
+      location: '',
+      period: '2023',
+      details: 'Préparation opérationnelle à l’emploi, suivie d’une embauche en CDI chez Open Group',
+    },
+    {
+      title: "Parcours Concepteur développeur d'applications Java full-stack",
       school: 'Diginamic',
       url: 'https://www.diginamic.fr/',
       location: 'À distance',
       period: '2023',
+      details: 'Interrompu pour la POEI Orsys',
     },
     {
       title: 'Master Infectiologie cellulaire et moléculaire',
