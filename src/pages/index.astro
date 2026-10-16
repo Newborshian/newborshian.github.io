@@ -1,0 +1,181 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import KeyFigures from '../components/KeyFigures.astro';
+import Section from '../components/Section.astro';
+import ExperienceCard from '../components/ExperienceCard.astro';
+import { cv } from '../data/cv';
+
+const title = `${cv.name} · ${cv.headline}`;
+const description = `${cv.headline} : ${cv.focus.join(', ').toLowerCase()}. ${cv.keyFigures[0].value} ${cv.keyFigures[0].label}.`;
+
+// Données structurées schema.org, lisibles par les moteurs et les assistants IA.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: cv.name,
+  jobTitle: cv.headline,
+  description: cv.bio.join(' '),
+  email: `mailto:${cv.contact.email}`,
+  sameAs: [cv.contact.linkedin, cv.contact.github],
+  knowsLanguage: cv.languages.map((language) => language.name),
+  knowsAbout: cv.skills.flatMap((group) => group.items),
+  worksFor: { '@type': 'Organization', name: cv.experiences[0].company },
+  alumniOf: cv.education.map((item) => ({ '@type': 'EducationalOrganization', name: item.school })),
+};
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <Header />
+  <main id="contenu">
+    <KeyFigures />
+
+    <Section id="experiences" title="Expériences">
+      <div class="stack-lg">
+        {cv.experiences.map((experience) => <ExperienceCard experience={experience} />)}
+      </div>
+    </Section>
+
+    <Section id="competences" title="Compétences">
+      <dl class="skills">
+        {
+          cv.skills.map((group) => (
+            <div class="skill-group">
+              <dt>{group.group}</dt>
+              <dd>
+                <ul class="tag-list">
+                  {group.items.map((item) => (
+                    <li class="tag">{item}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </Section>
+
+    <Section id="projets" title="Réalisations personnelles">
+      <ul class="plain-list">
+        {
+          cv.projects.map((project) => (
+            <li class="item">
+              <h3 class="item-title">
+                <a href={project.url} rel="noopener">
+                  {project.title}
+                </a>
+              </h3>
+              <p>{project.summary}</p>
+              <ul class="tag-list">
+                {project.stack.map((item) => (
+                  <li class="tag">{item}</li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    <Section id="formation" title="Formation">
+      <ul class="plain-list">
+        {
+          cv.education.map((item) => (
+            <li class="item">
+              <h3 class="item-title">{item.title}</h3>
+              <p class="muted">
+                {item.url ? <a href={item.url} rel="noopener">{item.school}</a> : item.school}
+                {` · ${item.location}`}
+                {item.period && ` · ${item.period}`}
+              </p>
+              {item.details && <p>{item.details}</p>}
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    <Section id="langues" title="Langues">
+      <dl class="languages">
+        {
+          cv.languages.map((language) => (
+            <div>
+              <dt>{language.name}</dt>
+              <dd class="muted">{language.level}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </Section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="muted">
+        Site statique, sans traceur ni cookie. Code source sur{' '}
+        <a href="https://github.com/Newborshian/newborshian.github.io" rel="noopener">GitHub</a>.
+      </p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .stack-lg {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .skills {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    margin: 0;
+  }
+
+  .skill-group dt {
+    font-weight: var(--weight-semibold);
+    margin-bottom: var(--space-2);
+  }
+
+  .skill-group dd,
+  .languages dd {
+    margin: 0;
+  }
+
+  .plain-list {
+    display: grid;
+    gap: var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .item-title {
+    font-size: var(--text-lg);
+  }
+
+  .muted {
+    color: var(--color-text-muted);
+  }
+
+  .languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin: 0;
+  }
+
+  .languages dt {
+    font-weight: var(--weight-semibold);
+  }
+
+  .footer {
+    padding-block: var(--space-8);
+    border-top: var(--border-width) solid var(--color-border);
+    font-size: var(--text-sm);
+  }
+</style>

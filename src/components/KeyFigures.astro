@@ -1,0 +1,47 @@
+---
+import { cv } from '../data/cv';
+---
+
+<section class="container" aria-labelledby="chiffres-titre">
+  <h2 id="chiffres-titre" class="visually-hidden">Chiffres clés</h2>
+  <ul class="figures">
+    {
+      cv.keyFigures.map((figure) => (
+        <li class="figure">
+          <span class="value">{figure.value}</span>
+          <span class="label">{figure.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .figures {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    padding: 0;
+    margin-bottom: var(--space-12);
+    list-style: none;
+  }
+
+  .figure {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .value {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-accent);
+  }
+
+  .label {
+    color: var(--color-text-muted);
+  }
+</style>
