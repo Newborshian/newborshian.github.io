@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import KeyFigures from '../components/KeyFigures.astro';
 import Section from '../components/Section.astro';
 import ExperienceCard from '../components/ExperienceCard.astro';
+import Assistant from '../components/Assistant.astro';
 import { cv } from '../data/cv';
 
 const title = `${cv.name} · ${cv.headline}`;
@@ -29,6 +30,8 @@ const jsonLd = {
   <Header />
   <main id="contenu">
     <KeyFigures />
+
+    <Assistant />
 
     <Section id="experiences" title="Expériences">
       <div class="stack-lg">
