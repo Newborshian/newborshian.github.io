@@ -6,6 +6,7 @@ import Section from '../components/Section.astro';
 import ExperienceCard from '../components/ExperienceCard.astro';
 import Assistant from '../components/Assistant.astro';
 import { cv } from '../data/cv';
+import { formatMonth } from '../lib';
 
 const title = `${cv.name} · ${cv.headline}`;
 const description = `${cv.headline} : ${cv.focus.join(', ').toLowerCase()}. ${cv.keyFigures[0].value} ${cv.keyFigures[0].label}.`;
@@ -21,7 +22,7 @@ const jsonLd = {
   sameAs: [cv.contact.linkedin, cv.contact.github],
   knowsLanguage: cv.languages.map((language) => language.name),
   knowsAbout: cv.skills.flatMap((group) => group.items),
-  worksFor: { '@type': 'Organization', name: cv.experiences[0].company },
+  worksFor: { '@type': 'Organization', name: cv.employer.name },
   alumniOf: cv.education.map((item) => ({ '@type': 'EducationalOrganization', name: item.school })),
 };
 ---
@@ -34,6 +35,10 @@ const jsonLd = {
     <Assistant />
 
     <Section id="experiences" title="Expériences">
+      <p class="employer">
+        Consultant chez <strong>{cv.employer.name}</strong> ({cv.employer.description.toLowerCase()}), en {cv.employer.contract} depuis
+        {' '}<time datetime={cv.employer.since}>{formatMonth(cv.employer.since)}</time>. Les missions ci-dessous ont été réalisées pour ses clients.
+      </p>
       <div class="stack-lg">
         {cv.experiences.map((experience) => <ExperienceCard experience={experience} />)}
       </div>
@@ -123,6 +128,11 @@ const jsonLd = {
 </Base>
 
 <style>
+  .employer {
+    margin-bottom: var(--space-6);
+    max-width: 44rem;
+  }
+
   .stack-lg {
     display: grid;
     gap: var(--space-6);
