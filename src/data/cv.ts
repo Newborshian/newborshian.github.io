@@ -3,7 +3,10 @@
 
 export interface Experience {
   title: string;
-  company: string;
+  /** Client chez qui la mission a lieu (l'employeur est `cv.employer`). */
+  client: string;
+  /** Projet mené pour l'employeur lui-même, sans client. */
+  internal?: boolean;
   location: string;
   /** Format AAAA-MM */
   start: string;
@@ -36,9 +39,15 @@ export interface Project {
 export const cv = {
   name: 'Christopher Bouthemy',
   headline: 'Développeur DevOps',
+  employer: {
+    name: 'Open Group',
+    description: 'Entreprise de services numériques',
+    contract: 'CDI',
+    since: '2023-10',
+  },
   focus: ['Automatisation', 'CI/CD', 'Supervision'],
   bio: [
-    "Issu d'une reconversion professionnelle réussie, je suis développeur principal sur les outils de supervision applicative du PSIN (Ministère de la Transition Écologique et Solidaire). J'y interviens seul sur l'ensemble du cycle de vie des produits : conception, développement, mise en production et monitoring.",
+    "Issu d'une reconversion professionnelle réussie, je suis consultant chez Open Group. En mission au PSIN (Ministère de la Transition Écologique et Solidaire), je suis développeur principal sur les outils de supervision applicative et j'interviens seul sur l'ensemble du cycle de vie des produits : conception, développement, mise en production et monitoring.",
     "Autonome, rigoureux et sensible à la sécurité, j'aime transformer un besoin d'exploitation en solution fiable, documentée et transmissible. Je reste curieux et en progression constante, avec des bases en développement full-stack (Java, Spring, Angular).",
   ],
   keyFigures: [
@@ -54,7 +63,7 @@ export const cv = {
   experiences: [
     {
       title: 'Développeur principal DevOps, supervision applicative et automatisation',
-      company: 'PSIN, Ministère de la Transition Écologique et Solidaire',
+      client: 'PSIN, Ministère de la Transition Écologique et Solidaire',
       location: "L'Isle-d'Abeau",
       start: '2025-06',
       summary:
@@ -80,7 +89,7 @@ export const cv = {
     },
     {
       title: 'Concepteur développeur',
-      company: 'SEIITRA Réseau',
+      client: 'SEIITRA Réseau',
       location: 'Montbonnot-Saint-Martin',
       start: '2024-01',
       end: '2025-01',
@@ -96,7 +105,8 @@ export const cv = {
     },
     {
       title: 'Concepteur développeur',
-      company: 'Open Group',
+      client: 'Open Group',
+      internal: true,
       location: 'Montbonnot-Saint-Martin',
       start: '2023-10',
       end: '2024-01',

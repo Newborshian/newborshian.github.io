@@ -13,7 +13,7 @@ const { experience: xp } = Astro.props;
   <header>
     <h3 class="title">{xp.title}</h3>
     <p class="meta">
-      <span class="company">{xp.company}</span>
+      <span>{xp.internal ? 'Projet interne : ' : 'Client : '}</span><span class="company">{xp.client}</span>
       <span aria-hidden="true"> · </span>
       <span>{xp.location}</span>
     </p>
