@@ -24,10 +24,11 @@ Variables d'environnement à définir dans Vercel :
 
 - `ANTHROPIC_API_KEY` : clé dédiée à ce site, avec une limite de dépense côté Anthropic.
 - `ALLOWED_ORIGIN` : adresse exacte du site (par exemple `https://cv-christopher-bouthemy.vercel.app`) ; les autres origines reçoivent une erreur 403.
-- `CLAUDE_MODEL` (facultatif) : modèle utilisé, `claude-opus-5-5` par défaut.
+- `UPSTASH_REDIS_REST_URL` et `UPSTASH_REDIS_REST_TOKEN` : base Redis qui tient les compteurs des quotas (intégration Upstash Redis du Marketplace Vercel). Sans elles, les compteurs restent en mémoire et ne sont pas fiables.
+- `CLAUDE_MODEL` (facultatif) : modèle utilisé, `claude-haiku-5-5` par défaut.
 
-Protections : question limitée à 500 caractères, 10 questions par heure et par adresse IP (en mémoire, par instance), réponse affichée en texte brut.
-Une règle de limitation de débit dans le pare-feu Vercel est recommandée en complément.
+Protections : question limitée à 500 caractères ; 5 questions par jour et par visiteur (adresse IP, stockée hachée) et 20 questions par jour au total, remis à zéro à minuit (heure de Paris) ; réponse affichée en texte brut.
+Si les compteurs sont injoignables, l'assistant refuse de répondre plutôt que de dépasser le budget.
 
 ## Design system
 

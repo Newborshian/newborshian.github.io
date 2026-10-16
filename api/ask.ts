@@ -1,14 +1,20 @@
 // Fonction Vercel : répond aux questions des visiteurs sur le parcours, à partir du CV uniquement.
 // Variables d'environnement (à définir dans Vercel) :
-//   ANTHROPIC_API_KEY  clé dédiée à ce site, avec une limite de dépense côté Anthropic
-//   ALLOWED_ORIGIN     adresse du site, par exemple https://cv-christopher-bouthemy.vercel.app
-//   CLAUDE_MODEL       facultatif, modèle à utiliser (claude-opus-5-5 par défaut)
+//   ANTHROPIC_API_KEY         clé dédiée à ce site, avec une limite de dépense côté Anthropic
+//   ALLOWED_ORIGIN            adresse du site, par exemple https://cv-christopher-bouthemy.vercel.app
+//   UPSTASH_REDIS_REST_URL    compteurs des quotas (intégration Upstash Redis de Vercel)
+//   UPSTASH_REDIS_REST_TOKEN
+//   CLAUDE_MODEL              facultatif, modèle à utiliser (claude-haiku-5-5 par défaut)
 
+import { createHash } from 'node:crypto';
 import Anthropic from '@anthropic-ai/sdk';
+import { Redis } from '@upstash/redis';
 import { cv } from '../src/data/cv';
 
 const MAX_QUESTION_LENGTH = 500;
-const RATE_LIMIT = { windowMs: 60 * 60 * 1000, max: 10 };
+const DAILY_LIMIT_PER_VISITOR = 5;
+const DAILY_LIMIT_TOTAL = 20;
+const COUNTER_TTL_SECONDS = 2 * 24 * 60 * 60;
 
 const SYSTEM_PROMPT = `Tu es l'assistant du CV en ligne de ${cv.name}. Tu réponds aux questions des recruteurs et visiteurs sur son parcours.
 
@@ -23,20 +29,36 @@ CV (JSON) :
 ${JSON.stringify(cv)}`;
 
 let client: Anthropic | undefined;
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN ? Redis.fromEnv() : undefined;
 
-// Limite par adresse IP, en mémoire : protection de base, propre à chaque instance de la fonction.
-// La protection principale reste la limite de dépense de la clé et une règle de pare-feu Vercel.
-const hits = new Map<string, { count: number; resetAt: number }>();
+// Sans Redis (développement local), compteurs en mémoire : propres à chaque instance, donc approximatifs.
+const memoryCounters = new Map<string, number>();
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = hits.get(ip);
-  if (!entry || entry.resetAt < now) {
-    hits.set(ip, { count: 1, resetAt: now + RATE_LIMIT.windowMs });
-    return false;
+async function increment(key: string): Promise<number> {
+  if (!redis) {
+    const value = (memoryCounters.get(key) ?? 0) + 1;
+    memoryCounters.set(key, value);
+    return value;
   }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT.max;
+  const value = await redis.incr(key);
+  if (value === 1) await redis.expire(key, COUNTER_TTL_SECONDS);
+  return value;
+}
+
+/** Consomme une question du quota du jour (heure de Paris). Renvoie un message d'erreur si le quota est atteint. */
+async function consumeQuota(ip: string): Promise<string | undefined> {
+  const day = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
+  // L'adresse IP n'est jamais stockée en clair.
+  const visitor = createHash('sha256').update(ip).digest('hex').slice(0, 32);
+
+  if ((await increment(`ask:visitor:${visitor}:${day}`)) > DAILY_LIMIT_PER_VISITOR) {
+    return `Vous avez atteint la limite de ${DAILY_LIMIT_PER_VISITOR} questions par jour. Pour aller plus loin, contactez-le par e-mail.`;
+  }
+  if ((await increment(`ask:total:${day}`)) > DAILY_LIMIT_TOTAL) {
+    return "L'assistant a atteint sa limite de questions pour aujourd'hui. Réessayez demain ou contactez-le par e-mail.";
+  }
+  return undefined;
 }
 
 function json(body: unknown, status: number, origin: string | null): Response {
@@ -57,11 +79,6 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: 'Origine non autorisée.' }, 403, null);
   }
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'inconnue';
-  if (isRateLimited(ip)) {
-    return json({ error: 'Trop de questions. Réessayez plus tard.' }, 429, origin);
-  }
-
   let question: unknown;
   try {
     ({ question } = (await request.json()) as { question?: unknown });
@@ -72,23 +89,34 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: `La question doit faire entre 1 et ${MAX_QUESTION_LENGTH} caractères.` }, 400, origin);
   }
 
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'inconnue';
+  let quotaError: string | undefined;
+  try {
+    quotaError = await consumeQuota(ip);
+  } catch (error) {
+    // Compteurs injoignables : on refuse plutôt que de dépasser le budget.
+    console.error('Erreur des compteurs de quota', error);
+    return json({ error: "L'assistant est indisponible pour le moment." }, 503, origin);
+  }
+  if (quotaError) {
+    return json({ error: quotaError }, 429, origin);
+  }
+
   try {
     client ??= new Anthropic();
-    const response = await client.beta.messages.create({
-      model: process.env.CLAUDE_MODEL ?? 'claude-opus-5-5',
+    const response = await client.messages.create({
+      model: process.env.CLAUDE_MODEL ?? 'claude-haiku-5-5',
       max_tokens: 2048,
       output_config: { effort: 'low' },
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
       system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: question.trim() }],
     });
 
     if (response.stop_reason === 'refusal') {
-      return json({ answer: "Je ne peux pas répondre à cette question. Pour toute demande, contactez-le par e-mail." }, 200, origin);
+      return json({ answer: 'Je ne peux pas répondre à cette question. Pour toute demande, contactez-le par e-mail.' }, 200, origin);
     }
     const answer = response.content
-      .filter((block): block is Anthropic.Beta.BetaTextBlock => block.type === 'text')
+      .filter((block): block is Anthropic.TextBlock => block.type === 'text')
       .map((block) => block.text)
       .join('')
       .trim();
