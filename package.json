@@ -1,0 +1,24 @@
+{
+  "name": "cv-christopher-bouthemy",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:weight": "node scripts/check-weight.mjs",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.135.0",
+    "@upstash/redis": "1.39.0",
+    "astro": "7.4.0"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
