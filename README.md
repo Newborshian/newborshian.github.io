@@ -1,6 +1,8 @@
 # CV en ligne de Christopher Bouthemy
 
-Site statique construit avec [Astro](https://astro.build), hébergé sur Vercel.
+Site statique construit avec [Astro](https://astro.build), hébergé sur Vercel : <https://newborshiangithubio-three.vercel.app>.
+
+L'ancienne adresse <https://newborshian.github.io> redirige vers Vercel grâce au fichier `index.html` à la racine du dépôt (servi par GitHub Pages, ignoré par Astro) ; `.nojekyll` empêche GitHub Pages de passer le dépôt dans Jekyll.
 
 ## Mettre à jour le contenu
 
