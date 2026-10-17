@@ -44,10 +44,12 @@ export const cv = {
     description: 'Entreprise de services numériques',
     contract: 'CDI',
     since: '2023-10',
+    /** Période sans mission, affichée pour expliquer le trou entre deux clients. */
+    intercontract: 'Entre les missions SEIITRA et PSIN, de janvier à juin 2025, j’étais en intercontrat chez Open Group.',
   },
   focus: ['Automatisation', 'CI/CD', 'Supervision'],
   bio: [
-    "Issu d'une reconversion professionnelle réussie, je suis consultant chez Open Group. En mission au PSIN (Ministère de la Transition Écologique et Solidaire), je suis développeur principal sur les outils de supervision applicative et j'interviens seul sur l'ensemble du cycle de vie des produits : conception, développement, mise en production et monitoring.",
+    "Attiré depuis toujours par l'informatique, j'ai quitté la biologie pour le développement : autoformation, POEI chez Orsys puis CDI chez Open Group, où je suis consultant. En mission au PSIN (Ministère de la Transition Écologique et Solidaire), je suis développeur principal sur les outils de supervision applicative et j'interviens seul sur l'ensemble du cycle de vie des produits : conception, développement, mise en production et monitoring.",
     "Autonome, rigoureux et sensible à la sécurité, j'aime transformer un besoin d'exploitation en solution fiable, documentée et transmissible. Je reste curieux et en progression constante, avec des bases en développement full-stack (Java, Spring, Angular).",
   ],
   keyFigures: [
@@ -158,6 +160,8 @@ export const cv = {
       school: 'UFR des sciences pharmaceutiques, Université de Tours',
       location: 'Tours',
       period: '',
+      details:
+        'Diplôme non validé : cursus suivi jusqu’au stage de fin d’études, interrompu pour me réorienter vers l’informatique',
     },
     {
       title: 'Licence Biologie santé',
