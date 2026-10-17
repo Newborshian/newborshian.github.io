@@ -11,8 +11,6 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "0.135.0",
-    "@upstash/redis": "1.39.0",
     "astro": "7.4.0"
   },
   "engines": {
