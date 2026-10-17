@@ -34,7 +34,7 @@ const jsonLd = {
     <Section id="experiences" title="Expériences">
       <p class="employer">
         Consultant chez <strong>{cv.employer.name}</strong> ({cv.employer.description.toLowerCase()}), en {cv.employer.contract} depuis
-        {' '}<time datetime={cv.employer.since}>{formatMonth(cv.employer.since)}</time>. Les missions ci-dessous ont été réalisées pour ses clients.
+        {' '}<time datetime={cv.employer.since}>{formatMonth(cv.employer.since)}</time>. Les missions ci-dessous ont été réalisées pour ses clients. {cv.employer.intercontract}
       </p>
       <div class="stack-lg">
         {cv.experiences.map((experience) => <ExperienceCard experience={experience} />)}
